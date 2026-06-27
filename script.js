@@ -10,6 +10,7 @@ let hour = 8;
 let isNight = false;
 let electionTimer = 100;
 let gameOver = false;
+let gameStarted = false;
 
 let currentEvent = null;
 let vehicles = [];
@@ -42,18 +43,30 @@ const eventList = [
   { type: "accident", text: "교통사고 발생!", need: "ambulance", emoji: "💥", day: 2, night: 5 }
 ];
 
+document.getElementById("startButton").addEventListener("click", () => {
+  document.getElementById("startScreen").classList.add("hidden");
+  document.getElementById("gameScreen").classList.remove("hidden");
+
+  gameStarted = true;
+  beep(700, 0.1);
+  message.innerText = "Owen 시장님, 첫 사건을 기다려주세요!";
+});
+
 function initCitizens() {
+  citizens = [];
+
   for (let i = 0; i < 24; i++) {
     citizens.push({
       x: Math.random() * 860 + 60,
       y: Math.random() * 260 + 150,
-      dx: Math.random() > 0.5 ? 0.4 : -0.4,
-      mood: "normal"
+      dx: Math.random() > 0.5 ? 0.4 : -0.4
     });
   }
 }
 
 function initCars() {
+  cars = [];
+
   for (let i = 0; i < 8; i++) {
     cars.push({
       x: Math.random() * 1000,
@@ -70,14 +83,15 @@ function randomCarColor() {
 }
 
 function selectUnit(unit) {
-  if (gameOver) return;
+  if (gameOver || !gameStarted) return;
+
   selectedUnit = unit;
   message.innerText = `${unitName(unit)} 선택! 사건 위치를 클릭하세요.`;
   beep(700, 0.08);
 }
 
 canvas.addEventListener("click", e => {
-  if (!currentEvent || !selectedUnit || gameOver) return;
+  if (!currentEvent || !selectedUnit || gameOver || !gameStarted) return;
 
   const rect = canvas.getBoundingClientRect();
   const mx = e.clientX - rect.left;
@@ -123,13 +137,15 @@ function dispatchVehicle(unit) {
 }
 
 function spawnEvent() {
-  if (currentEvent || gameOver) return;
+  if (currentEvent || gameOver || !gameStarted) return;
 
   let pool = [];
 
   eventList.forEach(ev => {
     const weight = isNight ? ev.night : ev.day;
-    for (let i = 0; i < weight; i++) pool.push(ev);
+    for (let i = 0; i < weight; i++) {
+      pool.push(ev);
+    }
   });
 
   const picked = pool[Math.floor(Math.random() * pool.length)];
@@ -146,8 +162,11 @@ function spawnEvent() {
 }
 
 function upgrade(type) {
+  if (gameOver || !gameStarted) return;
+
   if (money < 80) {
     message.innerText = "예산이 부족합니다. 사건을 해결해서 예산을 모으세요!";
+    sadSound();
     return;
   }
 
@@ -161,7 +180,7 @@ function upgrade(type) {
 }
 
 function update() {
-  if (gameOver) return;
+  if (gameOver || !gameStarted) return;
 
   citizens.forEach(c => {
     c.x += c.dx;
@@ -181,10 +200,6 @@ function update() {
     if (dist > 3) {
       v.x += dx / dist * v.speed;
       v.y += dy / dist * v.speed;
-    } else {
-      if (v.solving) {
-        support += 1;
-      }
     }
   });
 
@@ -210,6 +225,7 @@ function update() {
     if (support >= 55) {
       support += 7;
       money += 100;
+      support = clamp(support, 0, 100);
       message.innerText = "🎉 Owen 시장 연임 성공! 시민들이 박수를 보냅니다!";
       cheer();
     } else {
@@ -251,7 +267,7 @@ function drawSky() {
   if (isNight) {
     ctx.fillStyle = "white";
     for (let i = 0; i < 35; i++) {
-      ctx.fillRect(Math.random() * 1000, Math.random() * 160, 2, 2);
+      ctx.fillRect((i * 97) % 1000, (i * 41) % 160, 2, 2);
     }
   }
 }
@@ -302,6 +318,7 @@ function drawBuildings() {
 
   ctx.fillStyle = "#dfe6e9";
   ctx.fillRect(420, 70, 40, 50);
+
   ctx.fillStyle = "#2d3436";
   ctx.font = "24px Arial";
   ctx.fillText("🏛️", 423, 105);
@@ -339,12 +356,16 @@ function drawCitizens() {
     ctx.beginPath();
     ctx.moveTo(c.x, c.y + 6);
     ctx.lineTo(c.x, c.y + 25);
+
     ctx.moveTo(c.x - 9, c.y + 14);
     ctx.lineTo(c.x + 9, c.y + 14);
+
     ctx.moveTo(c.x, c.y + 25);
     ctx.lineTo(c.x - 8, c.y + 38);
+
     ctx.moveTo(c.x, c.y + 25);
     ctx.lineTo(c.x + 8, c.y + 38);
+
     ctx.stroke();
   });
 }
@@ -403,6 +424,7 @@ function drawHUD() {
 
   ctx.fillStyle = "#fff";
   ctx.fillRect(730, 20, 230, 45);
+
   ctx.fillStyle = "#111";
   ctx.font = "17px Arial";
   ctx.fillText(`다음 선거까지 ${Math.ceil(electionTimer)}초`, 750, 49);
@@ -421,7 +443,10 @@ function drawGameOver() {
 }
 
 function updateTime() {
+  if (!gameStarted || gameOver) return;
+
   hour++;
+
   if (hour >= 24) {
     hour = 0;
     day++;
@@ -498,10 +523,14 @@ function alarm() {
 
 function siren(unit) {
   let count = 0;
+
   const timer = setInterval(() => {
     beep(count % 2 === 0 ? 780 : 430, 0.12);
     count++;
-    if (count > 8) clearInterval(timer);
+
+    if (count > 8) {
+      clearInterval(timer);
+    }
   }, 160);
 }
 
@@ -518,7 +547,11 @@ function sadSound() {
 
 function gameLoop() {
   update();
-  draw();
+
+  if (gameStarted) {
+    draw();
+  }
+
   requestAnimationFrame(gameLoop);
 }
 
