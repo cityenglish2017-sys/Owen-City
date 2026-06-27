@@ -6,11 +6,56 @@ body {
   font-family: Arial, sans-serif;
 }
 
+.hidden {
+  display: none;
+}
+
+#startScreen {
+  width: 100vw;
+  height: 100vh;
+  background: linear-gradient(#7bdcff, #3b7cff);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-shadow: 2px 2px 4px #333;
+}
+
+#startScreen h1 {
+  font-size: 72px;
+  margin: 10px;
+}
+
+#startScreen h2 {
+  font-size: 42px;
+  margin: 10px;
+}
+
+#startScreen p {
+  font-size: 22px;
+}
+
+#startButton {
+  font-size: 28px;
+  padding: 18px 40px;
+  border-radius: 20px;
+  border: none;
+  background: #ffe066;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+#startButton:hover {
+  background: #ffcc00;
+}
+
 h1 {
   margin: 12px;
 }
 
-#topPanel, #upgradePanel {
+#topPanel,
+#upgradePanel {
   margin: 8px;
 }
 
