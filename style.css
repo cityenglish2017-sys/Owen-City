@@ -1,0 +1,42 @@
+body {
+  margin: 0;
+  background: #20242b;
+  color: white;
+  text-align: center;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  margin: 12px;
+}
+
+#topPanel, #upgradePanel {
+  margin: 8px;
+}
+
+button {
+  font-size: 16px;
+  padding: 10px 14px;
+  margin: 4px;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  background: #ffffff;
+}
+
+button:hover {
+  background: #ffe066;
+}
+
+#message {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffe066;
+}
+
+canvas {
+  display: block;
+  margin: 10px auto;
+  border: 5px solid #111;
+  border-radius: 12px;
+}
