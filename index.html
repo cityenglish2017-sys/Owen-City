@@ -6,25 +6,37 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>🚨 Owen City : Mayor Rescue</h1>
 
-  <div id="topPanel">
-    <button onclick="selectUnit('police')">🚓 경찰차</button>
-    <button onclick="selectUnit('fire')">🚒 소방차</button>
-    <button onclick="selectUnit('ambulance')">🚑 구급차</button>
-    <button onclick="selectUnit('tow')">🚛 견인차</button>
-    <button onclick="selectUnit('garbage')">🚚 쓰레기차</button>
+  <div id="startScreen">
+    <h1>🚨 Owen City</h1>
+    <h2>Mayor Rescue</h2>
+    <p>시장 Owen이 되어 도시의 사건사고를 해결하세요!</p>
+    <button id="startButton">게임 시작</button>
   </div>
 
-  <div id="upgradePanel">
-    <button onclick="upgrade('police')">경찰서 업그레이드</button>
-    <button onclick="upgrade('fire')">소방서 업그레이드</button>
-    <button onclick="upgrade('ambulance')">병원 업그레이드</button>
+  <div id="gameScreen" class="hidden">
+    <h1>👑 Owen City : Mayor Rescue</h1>
+
+    <div id="topPanel">
+      <button onclick="selectUnit('police')">🚓 경찰차</button>
+      <button onclick="selectUnit('fire')">🚒 소방차</button>
+      <button onclick="selectUnit('ambulance')">🚑 구급차</button>
+      <button onclick="selectUnit('tow')">🚛 견인차</button>
+      <button onclick="selectUnit('garbage')">🚚 쓰레기차</button>
+    </div>
+
+    <div id="upgradePanel">
+      <button onclick="upgrade('police')">경찰서 업그레이드</button>
+      <button onclick="upgrade('fire')">소방서 업그레이드</button>
+      <button onclick="upgrade('ambulance')">병원 업그레이드</button>
+      <button onclick="upgrade('tow')">정비소 업그레이드</button>
+      <button onclick="upgrade('garbage')">청소센터 업그레이드</button>
+    </div>
+
+    <p id="message">Owen 시장님, 도시를 지켜주세요!</p>
+
+    <canvas id="gameCanvas" width="1000" height="620"></canvas>
   </div>
-
-  <p id="message">Owen 시장님, 도시를 지켜주세요!</p>
-
-  <canvas id="gameCanvas" width="1000" height="620"></canvas>
 
   <script src="script.js"></script>
 </body>
